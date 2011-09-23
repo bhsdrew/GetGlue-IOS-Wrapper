@@ -1,0 +1,95 @@
+iOS Wrapper for the GetGlue API
+
+
+1) Add GetGlue.H , GetGlue.M , GetGlueDialog.h , GetGlueDialog.m, JSON Folder, OAUTH Folder, and closebutton images to your xcode project
+
+2) Update your GetGlue secret and key in GetGlue.m
+   #define GetGlueSecret          @"SECRET"
+   #define GetGlueKey             @"KEY"
+
+3) In any viewcontroller or Appdelegate create a GetGlue object in as a property in the .h file
+
+4) In the same .h file make the @interface have the <GetGlueDelegate>
+
+5) Add the delegate functions to the .m file of your viewcontroller
+   -(void)finishedRetrievingApi:(NSDictionary *)data;
+-(void)finishedRetrievingApiError:(NSError *)error;
+-(void)finishedAuthorizingUser;
+
+6) Initialize the GetGlue Class, this code below ill check if a GG auto Token exists in the userdefaults if not it will initiate the login webview.
+   Ex.
+    GetGluetest = [GetGlue alloc];
+    [GetGluetest setDelegate:self];
+    
+    if ([[NSUserDefaults standardUserDefaults] stringForKey:@"GGAccessTokenKey"] 
+        && [[NSUserDefaults standardUserDefaults] stringForKey:@"GGAccessTokenSecret"] )  {
+        GetGluetest.accessToken.key = [[NSUserDefaults standardUserDefaults] stringForKey:@"GGAccessTokenKey"] ;
+        GetGluetest.accessToken.secret = [[NSUserDefaults standardUserDefaults] objectForKey:@"GGAccessTokenSecret"];
+        GetGluetest.loggedinuser = [[NSUserDefaults standardUserDefaults] objectForKey:@"GGLoggedInUser"];
+        [self finishedAuthorizingUser];
+    }
+    else{
+       [GetGluetest initiateGetGlue]; 
+    }
+
+7) Call any of the Wrapper Methods
+   See below
+
+8) Retrieve data NSDictionary in the finishedRetrievingApi method
+
+9) Enjoy
+
+
+
+
+**************************************************************************************************************
+Ex.
+/*Check-in Methods */
+
+- (void)userAddCheckInForObjectId: (NSString *)objectId withSource:(NSString *)source fromApp:(NSString *)app andComment:(NSString *)comment;
+- (void)userRemoveCheckInForObjectId: (NSString *)objectId atTimeStamp:(NSString *)timestamp;
+- (void)getAllUserCheckInsForObjectId: (NSString *)objectId; //param action=checkedIn
+- (void)getLastUserCheckInForObjectId: (NSString *)objectId; //param action=lastCheckedIn
+- (void)getUserCheckinHistoryForObjectId: (NSString *)objectId;
+
+
+/*User Methods */
+- (void)addUserVisitToObjectId: (NSString *)objectId withSource: (NSString *)source fromApp:(NSString *)app;
+- (void)addUserLikeToObjectId: (NSString *)objectId withSource: (NSString *)source fromApp: (NSString *)app withComment: (NSString *)comment;
+- (void)addUserDisLikeToObjectId: (NSString *)objectId withSource: (NSString *)source fromApp: (NSString *)app withComment: (NSString *)comment;
+- (void)addUserFavoriteToObjectId: (NSString *)objectId withSource: (NSString *)source fromApp: (NSString *)app withComment: (NSString *)comment;
+- (void)addUserAskFriendsToObjectId: (NSString *)objectId withSource: (NSString *)source fromApp: (NSString *)app withComment: (NSString *)comment;
+- (void)removeUserInteractionForObjectId: (NSString *)objectId;
+- (void)addUserReplyToObjectId: (NSString *)objectId fromApp: (NSString *)app inReplyToUserId: (NSString *)replyTo withComment: (NSString *)comment forCheckInTimeStamp: (NSString *)timestamp;
+- (void)removeUserReplyToObjectID: (NSString *)objectId inReplyToUserId: (NSString *)userId withTimeStamp: (NSString *)timestamp;
+- (void)getUserProfileForUserId:(NSString *)userId andStickersForObjectId: (NSString *)stickerObjectId andStickersForPartner: (NSString *)stickerPartner;
+- (void)getUserFriendsForUserId: (NSString *)userId;
+- (void)getUserFollowersForUserId: (NSString *)userId;
+- (void)isUserId: (NSString *)userId friendsWithUserId: (NSString *)friendUserId;
+- (void)followUserId: (NSString *)followUserId;
+- (void)unFollowUserId: (NSString *)unfollowUserId;
+- (void)getUserInteractionsForUserId: (NSString *)userId inCategory: (NSString *)category;
+- (void)getUserInteractionsForUserId: (NSString *)userId andObjectId: (NSString *)objectId;
+- (void)getUserStreamOfType: (NSString *)streamType inCategory: (NSString *)category;
+- (void)getListOfGuruItemsForUserId: (NSString *)userId;
+- (void)getUserStickersForUserId: (NSString *)userId;
+
+/*Object Methods  */
+
+- (void)getObjectforId: (NSString *)objectId;
+
+- (void)getUserActivityForObjectId: (NSString *)objectId forAction: (NSString *)action andTotal:(NSString *)total andNumItems:(NSString *)numItems;
+- (void)getLinksForObjectId: (NSString *)objectId;
+- (void)getRepliesForObjectId: (NSString *)objectId forUserId:(NSString *)userID;
+- (void)getSimilarObjectsForObjectId: (NSString *)objectId;
+
+/*Network Methods */
+
+- (void)getCategories;
+- (void)getPopularItemsInCategory:(NSString *)category;
+- (void)getTopUsersInCategory:(NSString *)category;
+- (void)findObjectWithQuery:(NSString *)q;
+- (void)findUserWithQuery:(NSString *)userId;
+
+
+
